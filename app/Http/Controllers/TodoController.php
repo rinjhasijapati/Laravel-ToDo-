@@ -21,7 +21,8 @@ class TodoController extends Controller
 
         $todo = new Todo();
         $todo->title = $request->todo_text;
-        $todo->user_id = $request->user_id;
+        $todo->user_id = auth()->id();
+//        $todo->id = auth()->user_id;
         $todo->save();
 
         return redirect()->route('view');
@@ -45,5 +46,18 @@ class TodoController extends Controller
         $todo->save();
 
         return redirect()->route('view');
+    }
+
+    public function destroy($id)
+    {
+        $todo = Todo::findOrFail($id);
+        if ($todo->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $todo->delete();
+
+
+        return redirect()->route('view')->with('success', 'Todo deleted successfully.');
     }
 }

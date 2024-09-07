@@ -1,35 +1,26 @@
 <?php
 
-use App\Http\Controllers\TodoController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-//Route::get('/', function() {
-//    return view('welcome');
-//})->name("home");
-//
-//Route::get('/add', function () {
-//    return view('add');
-//})->name('add');
-//
-//Route::get('/view', function () {
-//    return view('view');
-//})->name('view');
-
-Route::get('gfg', function () {
-    return view('gfg');
+Route::get('/', function () {
+    return view('welcome');
 });
 
-//Route::resource()
+//Auth::routes(['verify' => true]);
 
-Route::get('/', [TodoController::class, 'index'])->name('home');
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/add', [TodoController::class, 'create'])->name('add');
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
-Route::post('/add', [TodoController::class, 'store'])->name('store');
+require __DIR__.'/auth.php';
 
-Route::get('/view', [TodoController::class, 'index'])->name('view');
-
-Route::post('/update/{id}', [TodoController::class, 'update'])->name('update');
 
 
 
